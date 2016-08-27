@@ -10,9 +10,9 @@ import (
 	"time"
 )
 
-//清除相同的关键字
-func main1() {
-	path := "./dictionary/black/default"
+// 将敏感词词典中重复的关键字清除掉
+func main() {
+	path := "../dicts/black/default"
 
 	var loadAllDictWalk filepath.WalkFunc = func(path string, f os.FileInfo, err error) error {
 		if f == nil {
@@ -74,9 +74,9 @@ func loadByLine(path string) (err error) {
 		}
 	}
 
-	tmpKw := [20000][]string{}
+	tmpKw := [50000][]string{}
 	l := 0
-	for k, _ := range keywords {
+	for k := range keywords {
 		l = len([]rune(k))
 		tmpKw[l] = append(tmpKw[l], k)
 	}

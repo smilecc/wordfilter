@@ -4,31 +4,35 @@ import (
 	"sync"
 )
 
+// Trie Tree
 type Trie struct {
-	Root           *TrieNode
+	Root           *Node
 	Mutex          sync.RWMutex
 	CheckWhiteList bool // 是否检查白名单
 }
 
-type TrieNode struct {
-	Node map[rune]*TrieNode
+// Node Trie tree node
+type Node struct {
+	Node map[rune]*Node
 	End  bool
 }
 
+// NewTrie returns a Trie tree
 func NewTrie() *Trie {
 	t := new(Trie)
 	t.Root = NewTrieNode()
 	return t
 }
 
-func NewTrieNode() *TrieNode {
-	n := new(TrieNode)
-	n.Node = make(map[rune]*TrieNode)
+// NewTrieNode return a *TrieNode
+func NewTrieNode() *Node {
+	n := new(Node)
+	n.Node = make(map[rune]*Node)
 	n.End = false
 	return n
 }
 
-// 添加一个敏感词(UTF-8的)
+// Add 添加一个敏感词(UTF-8的)到Trie树中
 func (t *Trie) Add(keyword string) {
 	chars := []rune(keyword)
 
@@ -50,7 +54,7 @@ func (t *Trie) Add(keyword string) {
 	t.Mutex.Unlock()
 }
 
-// 删除一个敏感词
+// Del 从Trie树中删除一个敏感词
 func (t *Trie) Del(keyword string) {
 	chars := []rune(keyword)
 	if len(chars) == 0 {
@@ -63,7 +67,7 @@ func (t *Trie) Del(keyword string) {
 	t.Mutex.Unlock()
 }
 
-func (t *Trie) cycleDel(node *TrieNode, chars []rune, index int) (shouldDel bool) {
+func (t *Trie) cycleDel(node *Node, chars []rune, index int) (shouldDel bool) {
 	char := chars[index]
 	l := len(chars)
 
@@ -89,7 +93,7 @@ func (t *Trie) cycleDel(node *TrieNode, chars []rune, index int) (shouldDel bool
 	return
 }
 
-// 查找替换
+// Query 查询敏感词
 // 将text中在trie里的敏感字，替换为*号
 // 返回结果: 是否有敏感字, 敏感字数组, 替换后的文本
 func (t *Trie) Query(text string) (bool, []string, string) {
@@ -214,6 +218,7 @@ func (t *Trie) replaceToAsterisk(found []string, chars []rune, i, j int) []strin
 	return found
 }
 
+// ReadAll 返回所有敏感词
 func (t *Trie) ReadAll() (words []string) {
 	t.Mutex.Lock()
 	words = []string{}
@@ -222,7 +227,7 @@ func (t *Trie) ReadAll() (words []string) {
 	return
 }
 
-func (t *Trie) cycleRead(node *TrieNode, words []string, parentWord string) []string {
+func (t *Trie) cycleRead(node *Node, words []string, parentWord string) []string {
 	for char, n := range node.Node {
 		if n.End {
 			words = append(words, parentWord+string(char))

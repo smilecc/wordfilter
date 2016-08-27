@@ -8,10 +8,15 @@
 ## 使用
 
 ```
+go get github.com/huayuego/wordfilter
+
+cd $GOPATH/src/github.com/huayuego/wordfilter/service
+
+// 启动HTTP服务
 go run main.go 127.0.0.1:8080
 ```
 
-then visit http://127.0.0.1:8080/v1/query?q=文本内容
+然后访问 http://127.0.0.1:8080/v1/query?q=文本内容
 
 ## API
 
@@ -48,7 +53,7 @@ then visit http://127.0.0.1:8080/v1/query?q=文本内容
 
 | Name | Type | Requried | Example | Desc. |
 | ---- | ---- | -------- | ------- | ----- |
-| q    | string | yes  | 你大爷,走私 | 敏感词，多个之间与逗号相隔 |
+| words    | string | yes  | 你大爷,走私 | 敏感词，多个之间与逗号相隔 |
 
 *  **Response:**
 ```
@@ -147,20 +152,21 @@ then visit http://127.0.0.1:8080/v1/query?q=文本内容
 ```
 
 ## 词库说明
-敏感词词库在 dictionary 目录里
+敏感词词库在 dicts 目录里
 每个敏感词独立一行。
 
-- dictionary/black/default 默认载入的敏感词词典
+- dicts/black/default 默认载入的敏感词词典
 
-- dictionary/black/exclude 默认载入的敏感词词典中需要删除的字词
+- dicts/black/exclude 默认载入的敏感词词典中需要删除的字词
   如black/default中有”情色“, 在black/exclude中也有”情色“, 则表示排除掉了”情色“这个词,不会过滤这个词了
 
-- dictionary/white 白名单
-- dictionary/white/prefix 白名单(前缀)
-- dictionary/white/suffix 白名单(后缀)
+- dicts/white 白名单
+- dicts/white/prefix 白名单(前缀)
+- dicts/white/suffix 白名单(后缀)
 
   对于敏感词 "口交"，”机8", 如果原文是 “xx路口交通事故”， ”阿司机82岁“ 之类的，会误判
   故，需要建议白名单机制：
   在prefix/default.txt中写  "司机"，
   在suffix/default.txt中写  "交通事故"
   就能解决此问题
+

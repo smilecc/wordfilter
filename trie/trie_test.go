@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func printTrie(node *TrieNode, t *testing.T, line string) {
+func printTrie(node *Node, t *testing.T, line string) {
 	if len(node.Node) > 0 {
 		for char, n := range node.Node {
 			//t.Logf("%s%s", line, string(char))
@@ -112,11 +112,11 @@ func TestQuery(t *testing.T) {
 	t.Log("text:", newText)
 
 	if !ok {
-		t.Errorf("替换失败 1\n")
+		t.Error("替换失败 1")
 	}
 
 	if len(words) == 0 {
-		t.Errorf("替换失败 2\n")
+		t.Error("替换失败 2")
 	}
 
 	if newText != expect {
@@ -128,15 +128,15 @@ func TestQuery(t *testing.T) {
 	ok, words, newText = trie.Query(text)
 
 	if ok {
-		t.Errorf("替换失败\n")
+		t.Error("替换失败")
 	}
 
 	if len(words) != 0 {
-		t.Errorf("替换失败 2\n")
+		t.Error("替换失败 2")
 	}
 
 	if newText != text {
-		t.Errorf("替换失败 3\n")
+		t.Error("替换失败 3")
 	}
 }
 
@@ -156,7 +156,7 @@ func TestQuery2(t *testing.T) {
 	t.Log("text:", newText)
 
 	if !ok {
-		t.Errorf("替换失败\n")
+		t.Error("替换失败")
 	}
 }
 
@@ -167,14 +167,14 @@ func TestReplaceNilTrie(t *testing.T) {
 	ok, words, newText := trie.Query(text)
 
 	if ok {
-		t.Errorf("替换失败\n")
+		t.Error("替换失败")
 	}
 
 	if len(words) != 0 {
-		t.Errorf("替换失败 2\n")
+		t.Error("替换失败 2")
 	}
 
 	if newText != text {
-		t.Errorf("替换失败 3\n")
+		t.Error("替换失败 3")
 	}
 }

@@ -10,14 +10,13 @@ import (
 	"strings"
 	"time"
 
-	_ "github.com/huayuego/wordfilter/dict"
 	"github.com/huayuego/wordfilter/trie"
 )
 
 type router struct {
 }
 
-func (this *router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (ro *router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.URL.Path {
 	case "/":
 		apiHelper(w)
@@ -52,7 +51,7 @@ func apiHelper(w http.ResponseWriter) {
 	help["/v1/white_suffix_words [GET]"] = "查看白名单（后缀）词组"
 	help["/v1/white_suffix_words [POST]"] = "添加白名单（后缀）词组"
 
-	serveJson(w, help)
+	serveJSON(w, help)
 }
 
 func queryWords(w http.ResponseWriter, r *http.Request) {
@@ -95,7 +94,7 @@ func queryWords(w http.ResponseWriter, r *http.Request) {
 		res.Code = 0
 		res.Error = "参数" + paramName + "不能为空"
 	}
-	serveJson(w, res)
+	serveJSON(w, res)
 }
 
 func blackWords(w http.ResponseWriter, r *http.Request) {
@@ -111,10 +110,6 @@ func blackWords(w http.ResponseWriter, r *http.Request) {
 func addBlackWords(w http.ResponseWriter, r *http.Request) {
 	resp := make(map[string]interface{})
 	q := r.FormValue("q")
-	op := r.FormValue("type")
-	if op == "init" {
-		trie.NewBlackTrie()
-	}
 
 	if q == "" {
 		resp["code"] = 0
@@ -131,7 +126,7 @@ func addBlackWords(w http.ResponseWriter, r *http.Request) {
 		resp["mess"] = fmt.Sprintf("共添加了%d个敏感词", i)
 	}
 
-	serveJson(w, resp)
+	serveJSON(w, resp)
 }
 
 func deleteBlackWords(w http.ResponseWriter, r *http.Request) {
@@ -165,7 +160,7 @@ func deleteBlackWords(w http.ResponseWriter, r *http.Request) {
 		resp["code"] = 1
 		resp["mess"] = fmt.Sprintf("共删除了%d个敏感词", i)
 	}
-	serveJson(w, resp)
+	serveJSON(w, resp)
 }
 
 func showBlackWords(w http.ResponseWriter, r *http.Request) {
@@ -191,7 +186,7 @@ func whitePrefixWords(w http.ResponseWriter, r *http.Request) {
 		q := r.FormValue("q")
 		op := r.FormValue("type")
 		if op == "init" {
-			trie.NewWhitePrefixTrie()
+			trie.ClearWhitePrefixTrie()
 		}
 
 		if q == "" {
@@ -209,7 +204,7 @@ func whitePrefixWords(w http.ResponseWriter, r *http.Request) {
 			resp["mess"] = fmt.Sprintf("共添加了%d个白名称前缀词", i)
 		}
 
-		serveJson(w, resp)
+		serveJSON(w, resp)
 	}
 }
 
@@ -227,7 +222,7 @@ func whiteSuffixWords(w http.ResponseWriter, r *http.Request) {
 		q := r.FormValue("q")
 		op := r.FormValue("type")
 		if op == "init" {
-			trie.NewWhiteSuffixTrie()
+			trie.ClearWhiteSuffixTrie()
 		}
 		if q == "" {
 			resp["code"] = 0
@@ -244,11 +239,11 @@ func whiteSuffixWords(w http.ResponseWriter, r *http.Request) {
 			resp["mess"] = fmt.Sprintf("共添加了%d个白名称后缀词", i)
 		}
 
-		serveJson(w, resp)
+		serveJSON(w, resp)
 	}
 }
 
-func serveJson(w http.ResponseWriter, data interface{}) {
+func serveJSON(w http.ResponseWriter, data interface{}) {
 	w.Header().Set("Server", "goo")
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
@@ -266,6 +261,8 @@ func main() {
 	if len(os.Args) > 1 {
 		ipAddr = os.Args[1]
 	}
+
+	trie.InitAllTrie()
 
 	t := time.Now().Local().Format("2006-01-02 15:04:05 -0700")
 	fmt.Printf("%s Listen %s\n", t, ipAddr)

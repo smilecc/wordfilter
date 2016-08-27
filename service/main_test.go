@@ -17,9 +17,9 @@ type respData struct {
 	Text     string   `json:"text"`
 }
 
-func Test_V1_Add_Fail(t *testing.T) {
-	postUrl := "http://127.0.0.1:8080/v1/balck_words"
-	resp, err := http.PostForm(postUrl, url.Values{})
+func TestFailToAddBlackWords(t *testing.T) {
+	postURL := "http://127.0.0.1:8080/v1/black_words"
+	resp, err := http.PostForm(postURL, url.Values{})
 	if err != nil {
 		t.Error(err)
 	}
@@ -39,9 +39,9 @@ func Test_V1_Add_Fail(t *testing.T) {
 	}
 }
 
-func Test_V1_Add_Success(t *testing.T) {
-	postUrl := "http://127.0.0.1:8080/v1/balck_words"
-	resp, err := http.PostForm(postUrl, url.Values{"q": {"测试"}})
+func TestAddBlackWordsSuccessfully(t *testing.T) {
+	postURL := "http://127.0.0.1:8080/v1/black_words"
+	resp, err := http.PostForm(postURL, url.Values{"q": {"测试"}})
 	if err != nil {
 		t.Error(err)
 	}
@@ -65,10 +65,10 @@ func Test_V1_Add_Success(t *testing.T) {
 	}
 }
 
-func Test_V1_Del_Success(t *testing.T) {
-	link := "http://127.0.0.1:8080/v1/balck_words"
+func TestDeleteBlackWordsSuccess(t *testing.T) {
+	delURL := "http://127.0.0.1:8080/v1/black_words"
 
-	r, err := http.NewRequest("DELETE", link, strings.NewReader(`{"q": "测试,test02"}`))
+	r, err := http.NewRequest("DELETE", delURL, strings.NewReader(`{"q": "测试,test02"}`))
 	r.Header.Set("Content-Type", "application/json")
 	resp, err := http.DefaultClient.Do(r)
 
@@ -95,9 +95,9 @@ func Test_V1_Del_Success(t *testing.T) {
 	}
 }
 
-func Test_V1_Query_Success_Without_Black_Words(t *testing.T) {
-	postUrl := "http://127.0.0.1:8080/v1/query"
-	resp, err := http.PostForm(postUrl, url.Values{"q": {"完全和谐的文本"}})
+func TestQuerySuccessfullyWithoutBlackWords(t *testing.T) {
+	queryURL := "http://127.0.0.1:8080/v1/query"
+	resp, err := http.PostForm(queryURL, url.Values{"q": {"完全和谐的文本"}})
 	if err != nil {
 		t.Error(err)
 	}
@@ -115,20 +115,20 @@ func Test_V1_Query_Success_Without_Black_Words(t *testing.T) {
 	data := respData{}
 	json.Unmarshal(body, &data)
 
-	if data.Code == 1 {
+	if data.Code != 1 {
 		t.Errorf("code: %d, error: %s, mess: %s", data.Code, data.Error, data.Mess)
 	}
 
 	t.Log(data.Keywords)
 	t.Log(data.Text)
 	if len(data.Keywords) != 0 {
-		t.Errorf("过滤失败")
+		t.Error("过滤失败")
 	}
 }
 
-func Test_V1_Query_Success_With_Black_Words(t *testing.T) {
-	postUrl := "http://127.0.0.1:8080/v1/query"
-	resp, err := http.PostForm(postUrl, url.Values{"q": {"对于1989年诺贝尔和平奖有什么看法"}})
+func TestQuerySuccessfullyWithBlackWords(t *testing.T) {
+	queryURL := "http://127.0.0.1:8080/v1/query"
+	resp, err := http.PostForm(queryURL, url.Values{"q": {"对于1989年诺贝尔和平奖有什么看法"}})
 	if err != nil {
 		t.Error(err)
 	}
@@ -153,6 +153,6 @@ func Test_V1_Query_Success_With_Black_Words(t *testing.T) {
 	t.Log(data.Keywords)
 	t.Log(data.Text)
 	if data.Keywords[0] != "1989年诺贝尔和平奖" {
-		t.Errorf("过滤失败")
+		t.Error("过滤失败")
 	}
 }

@@ -53,7 +53,7 @@ go run main.go 127.0.0.1:8080
 
 | Name | Type | Requried | Example | Desc. |
 | ---- | ---- | -------- | ------- | ----- |
-| words    | string | yes  | 你大爷,走私 | 敏感词，多个之间与逗号相隔 |
+| q    | string | yes  | 你大爷,走私 | 敏感词，多个之间与逗号相隔 |
 
 *  **Response:**
 ```

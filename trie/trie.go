@@ -74,7 +74,7 @@ func (t *Trie) cycleDel(node *Node, chars []rune, index int) (shouldDel bool) {
 	if n, ok := node.Node[char]; ok {
 		if index+1 < l {
 			shouldDel = t.cycleDel(n, chars, index+1)
-			if shouldDel {
+			if shouldDel && len(n.Node) == 0 {
 				if n.End { // 说明这是一个敏感词，不能删除
 					shouldDel = false
 				} else {

@@ -105,6 +105,20 @@ func TestDel2(t *testing.T) {
 	}
 }
 
+func TestDel3(t *testing.T) {
+	trie := NewTrie()
+	trie.Add("世界")
+	trie.Add("世界你好")
+	trie.Add("世界你不好")
+
+	trie.Del("世界你好")
+
+	words := trie.ReadAll()
+	if len(words) != 2 {
+		t.Error("删除操作失败")
+	}
+}
+
 func TestQuery(t *testing.T) {
 	trie := NewTrie()
 	trie.Add("AV")
